@@ -1,20 +1,20 @@
-const stompClient = new StompJs.Client({
+const client = new StompJs.Client({
     brokerURL: 'ws://localhost:8080/spring-boot-tutorial'
 });
 
-stompClient.onConnect = (frame) => {
+client.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
-    stompClient.subscribe('/topic/greetings', (greeting) => {
+    client.subscribe('/topic/greetings', (greeting) => {
         showGreeting(JSON.parse(greeting.body).content);
     });
 };
 
-stompClient.onWebSocketError = (error) => {
+client.onWebSocketError = (error) => {
     console.error('Error with websocket', error);
 };
 
-stompClient.onStompError = (frame) => {
+client.onStompError = (frame) => {
     console.error('Broker reported error: ' + frame.headers['message']);
     console.error('Additional details: ' + frame.body);
 };
@@ -32,17 +32,17 @@ function setConnected(connected) {
 }
 
 function connect() {
-    stompClient.activate();
+    client.activate();
 }
 
 function disconnect() {
-    stompClient.deactivate();
+    client.deactivate();
     setConnected(false);
     console.log("Disconnected");
 }
 
 function sendName() {
-    stompClient.publish({
+    client.publish({
         destination: "/app/hello",
         body: JSON.stringify({'name': $("#name").val()})
     });
