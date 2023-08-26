@@ -32,7 +32,7 @@ client.onStompError = (frame) => {
 
 function setConnected(connected) {
 	buttonConnect.disabled = connected;
-	buttonDisConnect.disabled = !connected; 
+	buttonDisConnect.disabled = !connected;
     if (connected) {
 		conversationDisplay.style.display = "block";
     }
