@@ -1,5 +1,8 @@
+const url = "ws://localhost:8080/spring-boot-tutorial";
+const topic = "/topic/greetings";
+const app = "/app/hello";
 const client = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/spring-boot-tutorial'
+    brokerURL: url
 });
 
 var buttonConnect;
@@ -13,7 +16,7 @@ var nameInput;
 client.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
-    client.subscribe('/topic/greetings', (greeting) => {
+    client.subscribe(topic, (greeting) => {
         showGreeting(JSON.parse(greeting.body).content);
     });
 };
@@ -29,12 +32,12 @@ client.onStompError = (frame) => {
 
 function setConnected(connected) {
 	buttonConnect.disabled = connected;
-	buttonDisConnect.disabled = connected; 
+	buttonDisConnect.disabled = !connected; 
     if (connected) {
-		conversationDisplay = "block";
+		conversationDisplay.style.display = "block";
     }
     else {
-		conversationDisplay = "none";
+		conversationDisplay.style.display = "none";
     }
     greetings.innerHTML = "";
 }
@@ -52,7 +55,7 @@ function disconnect() {
 
 function sendName() {
     client.publish({
-        destination: "/app/hello",
+        destination: app,
         body: JSON.stringify({'name': nameInput.value})
     });
 }
@@ -62,12 +65,10 @@ function showGreeting(message) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-	console.log('DOMContentLoaded');
 	buttonConnect = document.getElementById("connect");
 	buttonDisConnect = document.getElementById("disconnect");
 	buttonSend = document.getElementById("send");
-	conversationDisplay = document.getElementById("conversation").style.display;
-	conversationDisplay = "none";
+	conversationDisplay = document.getElementById("conversation");
 	greetings = document.getElementById("greetings");
 	formInput = document.getElementById("form");
 	nameInput = document.getElementById("name");
@@ -81,4 +82,5 @@ document.addEventListener("DOMContentLoaded", function() {
 		sendName();
 		e.preventDefault();});
 	formInput.addEventListener("submit", (e) => e.preventDefault());
+	setConnected(false);
 });

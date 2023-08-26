@@ -1,6 +1,10 @@
 html, body {
 	margin: 20px;
+	display: block;
 }
-table{
+table {
 	margin: 10px;
+}
+.row {
+	padding: 5px;
 }
