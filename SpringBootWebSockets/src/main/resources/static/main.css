@@ -4,6 +4,11 @@ html, body {
 }
 table {
 	margin: 10px;
+	width: 25%;
+}
+
+th {
+	text-align: left;
 }
 .row {
 	padding: 5px;
