@@ -3,7 +3,6 @@
 <head>
     <title>Hello WebSocket</title>
     <link href="/main.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <script src="/app.js"></script>
 </head>
@@ -12,7 +11,7 @@
     <div>
 		<h1>Spring Boot Tutorial</h1>
         <div>
-            <form>
+            <form id="form">
                 <div>
                     <label for="connect">WebSocket connection:</label>
                     <button id="connect" type="submit">Connect</button>
@@ -32,7 +31,7 @@
         </div>
     </div>
     <div>
-        <div>
+        <div id="conversation">
             <table>
                 <thead>
                 <tr>

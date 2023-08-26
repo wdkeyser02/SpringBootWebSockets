@@ -2,6 +2,14 @@ const client = new StompJs.Client({
     brokerURL: 'ws://localhost:8080/spring-boot-tutorial'
 });
 
+var buttonConnect;
+var buttonDisConnect;
+var buttonSend;
+var conversation;
+var greetings;
+var formInput;
+var nameInput;
+
 client.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
@@ -20,19 +28,20 @@ client.onStompError = (frame) => {
 };
 
 function setConnected(connected) {
-    $("#connect").prop("disabled", connected);
-    $("#disconnect").prop("disabled", !connected);
+	buttonConnect.disabled = connected;
+	buttonDisConnect.disabled = connected; 
     if (connected) {
-        $("#conversation").show();
+		conversationDisplay = "block";
     }
     else {
-        $("#conversation").hide();
+		conversationDisplay = "none";
     }
-    $("#greetings").html("");
+    greetings.innerHTML = "";
 }
 
 function connect() {
-    client.activate();
+	client.activate();
+	console.log('Connected');
 }
 
 function disconnect() {
@@ -44,17 +53,32 @@ function disconnect() {
 function sendName() {
     client.publish({
         destination: "/app/hello",
-        body: JSON.stringify({'name': $("#name").val()})
+        body: JSON.stringify({'name': nameInput.value})
     });
 }
 
 function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
+	greetings.innerHTML += "<tr><td>" + message + "</td></tr>"; 
 }
 
-$(function () {
-    $("form").on('submit', (e) => e.preventDefault());
-    $( "#connect" ).click(() => connect());
-    $( "#disconnect" ).click(() => disconnect());
-    $( "#send" ).click(() => sendName());
+document.addEventListener("DOMContentLoaded", function() {
+	console.log('DOMContentLoaded');
+	buttonConnect = document.getElementById("connect");
+	buttonDisConnect = document.getElementById("disconnect");
+	buttonSend = document.getElementById("send");
+	conversationDisplay = document.getElementById("conversation").style.display;
+	conversationDisplay = "none";
+	greetings = document.getElementById("greetings");
+	formInput = document.getElementById("form");
+	nameInput = document.getElementById("name");
+	buttonConnect.addEventListener("click", (e) => {
+		connect();
+		e.preventDefault();});
+	buttonDisConnect.addEventListener("click", (e) => {
+		disconnect();
+		e.preventDefault();});
+	buttonSend.addEventListener("click", (e) => {
+		sendName();
+		e.preventDefault();});
+	formInput.addEventListener("submit", (e) => e.preventDefault());
 });
