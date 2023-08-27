@@ -20,7 +20,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/spring-boot-tutorial")
-		.setAllowedOrigins("http://localhost:8080")
 		.withSockJS();
 	}
 
