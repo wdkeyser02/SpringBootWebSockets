@@ -5,8 +5,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.util.HtmlUtils;
 
-import willydekeyser.config.model.Greeting;
-import willydekeyser.config.model.Message;
+import willydekeyser.model.Greeting;
+import willydekeyser.model.Message;
 
 @Controller
 public class GreetingController {
