@@ -38,17 +38,18 @@ public class ChatController {
 			simpMessagingTemplate.convertAndSend("/topic/users", memberStore.getMembers());			
 		}
 		Message newMessage = new Message(newUser, null, Action.JOINED, Instant.now());
-        simpMessagingTemplate.convertAndSend("/topic/greetings", newMessage);
+        simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
 		return null;
 	}
 		
 	@EventListener
 	public void handleSessionConnectEvent(SessionConnectEvent event) {
-		
+		System.out.println("Session Connect Event");
 	}
 	
 	@EventListener
 	public void handleSessionDisconnectEvent(SessionDisconnectEvent event) {
+		System.out.println("Session Disconnect Event");
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
         if (sessionAttributes == null) {
@@ -62,7 +63,7 @@ public class ChatController {
         simpMessagingTemplate.convertAndSend("/topic/users", memberStore.getMembers());
         
         Message message = new Message(user, "", Action.LEFT, Instant.now());
-        simpMessagingTemplate.convertAndSend("/topic/greetings", message);
+        simpMessagingTemplate.convertAndSend("/topic/messages", message);
 	}
 	
 

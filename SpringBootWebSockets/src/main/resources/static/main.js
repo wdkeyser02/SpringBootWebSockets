@@ -1,6 +1,6 @@
 'use strict';
 const url = "ws://localhost:8080/spring-boot-tutorial";
-const topicUrl = "/topic/greetings";
+const topicUrl = "/topic/messages";
 const userUrl = "/topic/users";
 const appUsers = "/app/user";
 const client = new StompJs.Client({
