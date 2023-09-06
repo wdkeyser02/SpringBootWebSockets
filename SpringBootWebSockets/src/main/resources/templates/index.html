@@ -8,7 +8,42 @@
     <script src="/main.js"></script>
 </head>
 <body>
-	<h1>Spring Boot Tutorial</h1>
-	<h2>Web Chat!</h2>
+	<div class="header">
+		<div class="center">
+			<h1>Spring Boot Tutorial</h1>
+			<h2>Web Chat</h2>
+		</div>
+	</div>
+	<div class="username">
+		<div class="row">
+			<h3>WebSocket connection:</h3>
+            <form id="form">
+                <div class="row">
+                    <label class="row" for="connect">Username:</label>
+                    <input type="text" id="username" placeholder="Your username here...">
+                    <button id="connect" type="submit" disabled="disabled">Connect</button>
+                    <button id="disconnect" type="submit" disabled="disabled">Disconnect</button>
+                </div>
+                <div id="online"></div>
+            </form>
+        </div>
+	</div>
+	<div class="members">
+		<p>Members List:</p>
+        <div id="userslist"></div>
+	</div>
+	<div class="messages">
+		<p>Messages List:</p>
+		<div id="conversation">
+            <table>
+                <thead>
+                <tr>
+                    <th>Messages:</th>
+                </tr>
+                </thead>
+                <tbody id="messagesList"></tbody>
+            </table>
+        </div>
+	</div>
 </body>
 </html>
