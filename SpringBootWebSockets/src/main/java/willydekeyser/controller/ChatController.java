@@ -65,5 +65,11 @@ public class ChatController {
         simpMessagingTemplate.convertAndSend("/topic/messages", message);
 	}
 	
+	@MessageMapping("/message")
+	public void getMessage(Message message) throws Exception {
+		Message newMessage = new Message(message.user(), message.comment(), message.action(), Instant.now());
+        simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
+
+	}
 
 }

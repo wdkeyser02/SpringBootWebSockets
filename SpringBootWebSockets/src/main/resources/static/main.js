@@ -3,6 +3,7 @@ const url = "ws://localhost:8080/spring-boot-tutorial";
 const topicUrl = "/topic/messages";
 const userUrl = "/topic/users";
 const appUsers = "/app/user";
+const appMessages = "/app/message"
 const client = new StompJs.Client({
     brokerURL: url
 });
@@ -42,6 +43,12 @@ var conversationDisplay;
 var usersList;
 var messagesList;
 var online;
+var sendMessage;
+var send;
+var formSendMessage;
+var inputSendMessage;
+var messageList;
+var membersList
 
 document.addEventListener("DOMContentLoaded", function() {
 	userName = document.getElementById("username");
@@ -52,6 +59,12 @@ document.addEventListener("DOMContentLoaded", function() {
 	online = document.getElementById("online");
 	messagesList = document.getElementById("messagesList");
 	formInput = document.getElementById("form");
+	sendMessage = document.getElementById("sendmessage");
+	send = document.getElementById("send");
+	formSendMessage = document.getElementById("formsendmessage");
+	inputSendMessage = document.getElementById("inputsendmessage");
+	messageList = document.getElementById("messagelist");
+	membersList = document.getElementById("memberslist");
 	
 	buttonConnect.addEventListener("click", (e) => {
 		connect();
@@ -60,6 +73,11 @@ document.addEventListener("DOMContentLoaded", function() {
 	
 	buttonDisConnect.addEventListener("click", (e) => {
 		disconnect();
+		e.preventDefault();
+	});
+	
+	send.addEventListener("click", (e) => {
+		sendMessages();
 		e.preventDefault();
 	});
 	
@@ -77,6 +95,9 @@ document.addEventListener("DOMContentLoaded", function() {
 		e.preventDefault()
 	});
 	
+	formSendMessage .addEventListener("submit", (e) => {
+		e.preventDefault()
+	});
 });
 
 window.addEventListener("beforeunload" , (e) => {
@@ -98,6 +119,15 @@ function disconnect() {
     setConnected(false);
     online.innerHTML = "";
     console.log('Disconnected');
+}
+
+function sendMessages() {
+	console.log('Send message');
+	message = new Message(user, inputSendMessage.value, 'NEW_MESSAGE', null)
+	client.publish({
+        destination: appMessages,
+        body: JSON.stringify(message)
+    });
 }
 
 client.onConnect = (frame) => {
@@ -130,12 +160,16 @@ client.onStompError = (frame) => {
 };
 
 function setConnected(connected) {
-	buttonDisConnect.disabled = !connected; 
+	buttonDisConnect.disabled = !connected;
     if (connected) {
 		conversationDisplay.style.display = "block";
+		sendMessage.style.display = "block";
+		sendMessage.style.visibility = "visible"; 
     }
     else {
 		conversationDisplay.style.display = "none";
+		sendMessage.style.display = "none";
+		sendMessage.style.visibility = "hidden"; 
     }
     messagesList.innerHTML = "";
     usersList.innerHTML = ""; 
@@ -143,7 +177,14 @@ function setConnected(connected) {
 
 function showMessagesList(message) {
 	const date = new Date(message.timestamp);
-	messagesList.innerHTML += "<tr><td>" + message.user.username + " " + message.action + " " +  date.toLocaleString("nl-BE") + "</td></tr>"; 
+	console.log(message.action)
+	if(message.action == 'NEW_MESSAGE' || message.action == 'COMMENTED') {
+		messagesList.innerHTML += "<tr><td><h3>" + message.user.username + "</h3> " + message.action + " " +  date.toLocaleString("nl-BE") +  " - " + message.comment + "</td></tr>"; 
+	};
+	if(message.action == 'JOINED' || message.action == 'LEFT') {
+		messagesList.innerHTML += "<tr><td><h3>" + message.user.username + "</h3> " + message.action + " " +  date.toLocaleString("nl-BE") + "</td></tr>"; 
+	}
+	updateScroll(messageList);
 }
 
 function showUsers(users) {
@@ -153,7 +194,8 @@ function showUsers(users) {
 			return;
 		}
 		usersList.innerHTML += "<p>" + connectedUser.username + "</p>"; 
-	})
+	});
+	updateScroll(membersList);
 }
 
 function hasOnlyLettersAndNumbers(string) {
@@ -168,4 +210,8 @@ function uuidv4() {
             v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
+}
+
+function updateScroll(element) {
+	element.scrollTop = element.scrollHeight;
 }

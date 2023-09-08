@@ -24,7 +24,7 @@ html, body {
 
 .username {
 	width: 100%;
-	height: 10%;
+	height: 15%;
 	padding: 0px;
 	margin: 0px;
 	background-color: white;
@@ -32,8 +32,9 @@ html, body {
 }
 
 .members {
+	overflow: auto;
 	width: 100%;
-	height: 40%;
+	height: 35%;
 	padding: 0px;
 	margin: 0px;
 	background-color: white;
@@ -41,6 +42,7 @@ html, body {
 }
 
 .messages {
+	overflow: auto;
 	width: 100%;
 	height: 40%;
 	padding: 0px;
@@ -57,4 +59,10 @@ html, body {
 	margin: auto;
 	text-align: center;
 	width: 50%;
+}
+
+#sendmessage {
+	display: none;
+	visibility: hidden;
+	background-color: white;
 }
