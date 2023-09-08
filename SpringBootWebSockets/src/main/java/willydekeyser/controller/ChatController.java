@@ -1,7 +1,6 @@
 package willydekeyser.controller;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.event.EventListener;
@@ -30,7 +29,7 @@ public class ChatController {
 	}
 	
 	@MessageMapping("/user")
-	public List<User> getusers(User user, SimpMessageHeaderAccessor headerAccessor) throws Exception {
+	public void getusers(User user, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		User newUser = new User(user.id(), user.username());
 		headerAccessor.getSessionAttributes().put("user", newUser);
 		memberStore.addMember(newUser);
@@ -39,7 +38,7 @@ public class ChatController {
 		}
 		Message newMessage = new Message(newUser, null, Action.JOINED, Instant.now());
         simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
-		return null;
+
 	}
 		
 	@EventListener
