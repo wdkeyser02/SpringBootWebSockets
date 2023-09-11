@@ -1,31 +1,38 @@
 'use strict';
 const url = "ws://localhost:8080/spring-boot-tutorial";
-const topicUrl = "/topic/messages";
 const userUrl = "/topic/users";
+const topicUrl = "/topic/messages";
+const privateTopicUrl = "/topic/privatemessages";
+const privatePreUrl = "/user/";
 const appUsers = "/app/user";
 const appMessages = "/app/message"
+const appPrivateMessages = "/app/privatemessage"
 const client = new StompJs.Client({
     brokerURL: url
 });
 
 class User {
 	id;
+	serialId;
 	username;
 	
-	constructor(id, username) {
+	constructor(id, serialId, username) {
 		this.id = id;
+		this.serialId = serialId;
 		this.username = username;
 	}
 };
 
 class Message {
 	user;
+	receiverId;
 	comment;
 	action;
 	timestamp;
 	
-	constructor(user, comment, action, timestamp) {
+	constructor(user, receiverId, comment, action, timestamp) {
 		this.user = user;
+		this.receiverId = receiverId
 		this.comment = comment;
 		this.action = action;
 		this.timestamp = timestamp;
@@ -48,7 +55,10 @@ var send;
 var formSendMessage;
 var inputSendMessage;
 var messageList;
-var membersList
+var membersList;
+var membersListSelected;
+var messageLabel;
+var selectedMember = 0;
 
 document.addEventListener("DOMContentLoaded", function() {
 	userName = document.getElementById("username");
@@ -65,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	inputSendMessage = document.getElementById("inputsendmessage");
 	messageList = document.getElementById("messagelist");
 	membersList = document.getElementById("memberslist");
+	messageLabel = document.getElementById("messagelabel");
 	
 	buttonConnect.addEventListener("click", (e) => {
 		connect();
@@ -77,7 +88,11 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 	
 	send.addEventListener("click", (e) => {
-		sendMessages();
+		if(selectedMember == 0) {
+			sendMessages();
+		} else {
+			sendPrivateMessages(selectedMember);
+		}
 		e.preventDefault();
 	});
 	
@@ -95,14 +110,13 @@ document.addEventListener("DOMContentLoaded", function() {
 		e.preventDefault()
 	});
 	
-	formSendMessage .addEventListener("submit", (e) => {
+	formSendMessage.addEventListener("submit", (e) => {
 		e.preventDefault()
 	});
 });
 
-window.addEventListener("beforeunload" , (e) => {
+window.addEventListener("beforeunload" , () => {
 	disconnect();
-	console.log("Browser closed " + e);
 });
 
 function connect() {
@@ -122,10 +136,19 @@ function disconnect() {
 }
 
 function sendMessages() {
-	console.log('Send message');
-	message = new Message(user, inputSendMessage.value, 'NEW_MESSAGE', null)
+	console.log('Send public messages');
+	message = new Message(user, null, inputSendMessage.value, 'NEW_MESSAGE', null)
 	client.publish({
         destination: appMessages,
+        body: JSON.stringify(message)
+    });
+}
+
+function sendPrivateMessages(receiverId) {
+	console.log('Send private message');
+	message = new Message(user, receiverId, inputSendMessage.value, 'NEW_PRIVATE_MESSAGE', null)
+    client.publish({
+        destination: appPrivateMessages,
         body: JSON.stringify(message)
     });
 }
@@ -133,17 +156,21 @@ function sendMessages() {
 client.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
-    user = new User(uuidv4(), userName.value);
+    user = new User(uuidv4(), null, userName.value);
     online.innerHTML = "<p>" + user.username + " you are online!</p>";
+    
+    client.subscribe(privatePreUrl + user.id + userUrl, (usersList) => {
+        showUsers(JSON.parse(usersList.body));
+    });
     
     client.subscribe(topicUrl, (message) => {
         showMessagesList(JSON.parse(message.body));
     });
     
-    client.subscribe(userUrl, (usersList) => {
-        showUsers(JSON.parse(usersList.body));
+    client.subscribe(privatePreUrl + user.id + privateTopicUrl, (message) => {
+        showPrivateMessagesList(JSON.parse(message.body));
     });
-        
+           
     client.publish({
         destination: appUsers,
         body: JSON.stringify(user)
@@ -177,25 +204,42 @@ function setConnected(connected) {
 
 function showMessagesList(message) {
 	const date = new Date(message.timestamp);
-	console.log(message.action)
 	if(message.action == 'NEW_MESSAGE' || message.action == 'COMMENTED') {
-		messagesList.innerHTML += "<tr><td><h3>" + message.user.username + "</h3> " + message.action + " " +  date.toLocaleString("nl-BE") +  " - " + message.comment + "</td></tr>"; 
+		messagesList.innerHTML += "<tr><td><div><h3>" + message.user.username + "</h3> " + message.action + " " +  date.toLocaleString("nl-BE") +  " - " + message.comment + "</div></td></tr>"; 
 	};
 	if(message.action == 'JOINED' || message.action == 'LEFT') {
-		messagesList.innerHTML += "<tr><td><h3>" + message.user.username + "</h3> " + message.action + " " +  date.toLocaleString("nl-BE") + "</td></tr>"; 
+		messagesList.innerHTML += "<tr><td><div>" + message.user.username + " " + message.action + " " +  date.toLocaleString("nl-BE") + "</div></td></tr>"; 
 	}
 	updateScroll(messageList);
 }
 
+function showPrivateMessagesList(message) {
+	const date = new Date(message.timestamp);
+	messagesList.innerHTML += "<tr><td><div class='private'><h3>" + message.user.username + "</h3> " + message.action + " " +  date.toLocaleString("nl-BE") + " - " + message.comment + "</div></td></tr>"; 
+	updateScroll(messageList);
+}
+
 function showUsers(users) {
-	usersList.innerHTML = ""; 
+	usersList.innerHTML = "<li class='red' id='memberslistitem0'>All members</li>";
+	messageLabel.innerHtml = "Send a public message:";
 	users.forEach( connectedUser => {
-		if(connectedUser.id == user.id) {
-			return;
-		}
-		usersList.innerHTML += "<p>" + connectedUser.username + "</p>"; 
+		usersList.innerHTML += "<li class='black' id='memberslistitem" + connectedUser.serialId + "' >" + connectedUser.username + "</li>"; 
 	});
 	updateScroll(membersList);
+	membersListSelected = document.getElementById('memberslistitem0');
+	usersList.addEventListener("click", (e) => {
+		membersListSelected.className = 'black';
+		membersListSelected  = document.getElementById(e.target.id);
+		if(membersListSelected.id == 'memberslistitem0') {
+			messageLabel.innerHTML = "Send a public message:";
+		} else {
+			messageLabel.innerHTML = "Send a private message to: " + membersListSelected.textContent;
+		}
+		
+		membersListSelected.className = 'red';
+		selectedMember = membersListSelected.id.charAt(membersListSelected.id.length - 1);
+	});
+	
 }
 
 function hasOnlyLettersAndNumbers(string) {
