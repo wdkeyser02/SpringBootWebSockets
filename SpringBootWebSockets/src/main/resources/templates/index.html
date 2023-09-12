@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Spring Boot Tutorial Web Chat</title>
-    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
     <link href="/main.css" rel="stylesheet">
-    <script src="/main.js"></script>
 </head>
 <body>
 	<div class="header">
@@ -14,45 +12,15 @@
 			<h2>Web Chat</h2>
 		</div>
 	</div>
-	<div class="username">
-		<div class="row">
-			<h3>WebSocket connection:</h3>
-            <form id="form">
-                <div class="row">
-                    <label class="row" for="connect">Username:</label>
-                    <input type="text" id="username" placeholder="Your username here...">
-                    <button id="connect" type="submit" disabled="disabled">Connect</button>
-                    <button id="disconnect" type="submit" disabled="disabled">Disconnect</button>
-                </div>
-            </form>                
-            <div id="online"></div>
-            <div  class="row" id="sendmessage">
-		    	<form id="formsendmessage">
-		        	<div>
-		            	<label id="messagelabel" class="row" for="send">Send a public message:</label>
-		                <input type="text" id="inputsendmessage" placeholder="Type your message here...">
-		                <button id="send" type="submit">Send</button>
-		            </div>
-		        </form>
-        	</div>
-        </div>
-	</div>
-	<div class="members" id="memberslist">
-		<p>Members List:</p>
-        <ul id="userslist"></ul>
-	</div>
-	<div class="messages" id="messagelist">
-		<p>Messages List:</p>
-		<div id="conversation">
-            <table>
-                <thead>
-                <tr>
-                    <th>Messages:</th>
-                </tr>
-                </thead>
-                <tbody id="messagesList"></tbody>
-            </table>
-        </div>
+	<div class="login">
+		<div class="center">
+			<h3>Web Chat login:</h3>
+	        <form id="loginform" action="/webchat">
+	        	<div class="row">
+	            	<button id="login" type="submit">Login</button>
+	            </div>
+	        </form>
+		</div>                
 	</div>
 </body>
 </html>

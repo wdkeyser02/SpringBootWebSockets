@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Boot Tutorial Web Chat</title>
+    <link href="/loginstyle.css" rel="stylesheet">
+</head>
+<body>
+	<div class="header">
+		<div class="center">
+			<h1>Spring Boot Tutorial</h1>
+			<h2>Web Chat</h2>
+		</div>
+	</div>
+	<div class="login">
+		<div class="center">
+			<div class="login-page">
+			  	<div class="form">
+					<h2>Please Log In</h2>
+					<div class="error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+					<div class="error" th:if="${param.error}">Invalid username and password.</div>
+					<div class="error" th:if="${param.logout}">You have been logged out.</div>
+					<form  class="login-form" th:action="@{/login}" method="post">
+						<div>
+							<input type="text" name="username" placeholder="Username"/>
+						</div>
+						<div>
+							<input type="password" name="password" placeholder="Password"/>
+						</div>
+							<input class="button" type="submit" value="Log in" />
+					</form>
+				</div>
+			</div>
+		</div>                
+	</div>	
+</body>
+</html>

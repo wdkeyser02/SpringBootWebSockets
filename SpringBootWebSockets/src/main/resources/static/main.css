@@ -92,3 +92,13 @@ html, body {
 .black {
 	color : black;
 }
+
+.login {
+	padding: 50px;
+}
+
+button#login {
+	padding: 10px 30px 10px 30px;
+	margin: 50px;
+	
+}

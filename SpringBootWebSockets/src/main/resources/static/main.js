@@ -76,7 +76,8 @@ document.addEventListener("DOMContentLoaded", function() {
 	messageList = document.getElementById("messagelist");
 	membersList = document.getElementById("memberslist");
 	messageLabel = document.getElementById("messagelabel");
-	
+	buttonConnect.disabled = false;
+	userName.textContent = loginUserName;
 	buttonConnect.addEventListener("click", (e) => {
 		connect();
 		e.preventDefault();
@@ -95,16 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 		e.preventDefault();
 	});
-	
-	userName.addEventListener("keyup", () => {
-		const userNameValue = userName.value;
-		if(!userNameValue.length == 0 && hasOnlyLettersAndNumbers(userNameValue)) {
-			buttonConnect.disabled = false;
-		} else {
-			buttonConnect.disabled = true;
-		}
-	});
-	
+		
 	formInput.addEventListener("submit", (e) => {
 		setConnected(false);
 		e.preventDefault()
@@ -156,7 +148,7 @@ function sendPrivateMessages(receiverId) {
 client.onConnect = (frame) => {
     setConnected(true);
     console.log('Connected: ' + frame);
-    user = new User(uuidv4(), null, userName.value);
+    user = new User(uuidv4(), null, loginUserName);
     online.innerHTML = "<p>" + user.username + " you are online!</p>";
     
     client.subscribe(privatePreUrl + user.id + userUrl, (usersList) => {
@@ -240,11 +232,6 @@ function showUsers(users) {
 		selectedMember = membersListSelected.id.charAt(membersListSelected.id.length - 1);
 	});
 	
-}
-
-function hasOnlyLettersAndNumbers(string) {
-	const regex = /^[a-zA-Z0-9 ]+$/
-	return regex.test(string)
 }
 
 function uuidv4() {
