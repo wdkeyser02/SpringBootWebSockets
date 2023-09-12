@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	messageLabel = document.getElementById("messagelabel");
 	buttonConnect.disabled = false;
 	userName.textContent = loginUserName;
+	
 	buttonConnect.addEventListener("click", (e) => {
 		connect();
 		e.preventDefault();
