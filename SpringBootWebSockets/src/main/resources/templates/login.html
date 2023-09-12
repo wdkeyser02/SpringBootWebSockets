@@ -18,8 +18,6 @@
 			  	<div class="form">
 					<h2>Please Log In</h2>
 					<div class="error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-					<div class="error" th:if="${param.error}">Invalid username and password.</div>
-					<div class="error" th:if="${param.logout}">You have been logged out.</div>
 					<form  class="login-form" th:action="@{/login}" method="post">
 						<div>
 							<input type="text" name="username" placeholder="Username"/>

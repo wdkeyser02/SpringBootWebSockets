@@ -35,16 +35,21 @@ public class SecurityConfig {
 		
 	@Bean
 	UserDetailsService userDetailsService() {
-		var admin = User.builder()
+		var user1 = User.builder()
 				.username("Willy De Keyser")
-				.password("{noop}password")
-				.roles("USER", "ADMIN")
-				.build();
-		var user = User.builder()
-				.username("Ken De Keyser")
 				.password("{noop}password")
 				.roles("USER")
 				.build();
-		return new InMemoryUserDetailsManager(admin, user);
+		var user2 = User.builder()
+				.username("Bill")
+				.password("{noop}password")
+				.roles("USER")
+				.build();
+		var user3 = User.builder()
+				.username("Steve")
+				.password("{noop}password")
+				.roles("USER")
+				.build();
+		return new InMemoryUserDetailsManager(user1, user2, user3);
 	}
 }

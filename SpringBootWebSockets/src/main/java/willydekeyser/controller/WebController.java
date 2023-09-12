@@ -34,7 +34,6 @@ public class WebController {
                 errorMessage = ex.getMessage();
             }
         }
-        System.err.println(errorMessage);
         model.addAttribute("errorMessage", errorMessage);
 		return "login";
     }
